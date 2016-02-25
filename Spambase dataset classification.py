@@ -2,6 +2,7 @@ import sys
 
 def runAndPrint(filename):
 
+    lengthOfAttritube = 58
     trainingDataset = []
     testDataset = []
     count = 1
@@ -14,15 +15,27 @@ def runAndPrint(filename):
             else:
                 trainingDataset.append(line)
                 count += 1
-    tempDataset = [0] * 58
+
+    # Sum of training dataset
+    sumValueOfTraingingDataset = [0] * lengthOfAttritube
     for trainingData in trainingDataset:
         count = 0
         for dev in trainingData.split(","):
             index = count % 58
-            tempDataset[index] += float(dev)
+            sumValueOfTraingingDataset[index] += float(dev)
             count += 1
-    print(tempDataset)
 
+    # Mean value of training dataset
+    meanValueOfTrainingDataset = [0.0] * lengthOfAttritube
+    count = 0
+    for tempData in sumValueOfTraingingDataset:
+        meanValueOfTrainingDataset[count] = (tempData / len(trainingDataset))
+        #print(meanValueOfTrainingDataset[count])
+        count += 1
+
+
+
+    #print((meanValueOfTrainingDataset[57]))
 
     #print(testData)
     #print("---")
