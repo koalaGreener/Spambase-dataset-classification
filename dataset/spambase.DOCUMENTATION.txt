@@ -30,7 +30,7 @@
         Cranor, Lorrie F., LaMacchia, Brian A.  Spam! 
         Communications of the ACM, 41(8):74-83, 1998.
 
-5. Number of Instances: 4601 (1813 Spam = 39.4%)
+5. Number of Instances: 4601 (1813 Spam = 39.4%) 4601 * 0.9 = 4140
 
 6. Number of Attributes: 58 (57 continuous, 1 nominal class label)
 
