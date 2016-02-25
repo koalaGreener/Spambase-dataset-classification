@@ -17,12 +17,11 @@ def runAndPrint(filename):
                 count += 1
 
     # Sum of training dataset
-    sumValueOfTraingingDataset = [0] * lengthOfAttritube
+    sumValueOfTraingingDataset = [0.0] * lengthOfAttritube
     for trainingData in trainingDataset:
         count = 0
         for dev in trainingData.split(","):
-            index = count % 58
-            sumValueOfTraingingDataset[index] += float(dev)
+            sumValueOfTraingingDataset[count] += float(dev)
             count += 1
 
     # Mean value of training dataset
@@ -30,8 +29,25 @@ def runAndPrint(filename):
     count = 0
     for tempData in sumValueOfTraingingDataset:
         meanValueOfTrainingDataset[count] = (tempData / len(trainingDataset))
-        #print(meanValueOfTrainingDataset[count])
         count += 1
+
+
+    #Standard Value calculation
+    stanardValueOfTrainingDataset = [0.0] * lengthOfAttritube
+
+    for eachData in trainingDataset:
+        countForValue = 0
+        for eachValue in eachData.split(","):
+            stanardValueOfTrainingDataset[countForValue] += ( ( float(eachValue) - meanValueOfTrainingDataset[countForValue] ) ** 2 )
+            countForValue += 1
+
+
+    for value in stanardValueOfTrainingDataset:
+        print((value / len(trainingDataset)) ** 0.5)
+
+
+
+
 
 
 
