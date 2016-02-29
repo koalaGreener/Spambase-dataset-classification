@@ -2,7 +2,7 @@ import sys
 
 def readTheFile(filename):
 
-    lengthOfAttritube = 58
+    lengthOfAttritube = 57
     trainingDataset = []
     testDataset = []
     count = 1
@@ -17,7 +17,7 @@ def readTheFile(filename):
                 count += 1
 
     # Sum of training dataset
-    sumValueOfTraingingDataset = [0.0] * lengthOfAttritube
+    sumValueOfTraingingDataset = [0.0] * (lengthOfAttritube + 1)
     for trainingData in trainingDataset:
         count = 0
         for dev in trainingData.split(","):
@@ -25,7 +25,7 @@ def readTheFile(filename):
             count += 1
 
     # Mean value of training dataset
-    meanValueOfTrainingDataset = [0.0] * lengthOfAttritube
+    meanValueOfTrainingDataset = [0.0] * (lengthOfAttritube + 1)
     count = 0
     for tempData in sumValueOfTraingingDataset:
         meanValueOfTrainingDataset[count] = (tempData / len(trainingDataset))
@@ -33,7 +33,7 @@ def readTheFile(filename):
 
 
     #Standard Value calculation
-    stanardValueOfTrainingDataset = [0.0] * lengthOfAttritube
+    stanardValueOfTrainingDataset = [0.0] * (lengthOfAttritube + 1)
 
     for eachData in trainingDataset:
         countForValue = 0
@@ -52,7 +52,7 @@ def readTheFile(filename):
     trainingDatasetInZScoreFormat = []
 
     for trainingData in trainingDataset:
-        zScore = [0.0] * lengthOfAttritube
+        zScore = [0.0] * (lengthOfAttritube + 1)
         count = 0
         for dev2 in trainingData.split(","):
             if (count == 57):
@@ -63,7 +63,68 @@ def readTheFile(filename):
             count += 1
         trainingDatasetInZScoreFormat.append(zScore)
 
-    print (trainingDatasetInZScoreFormat)
+    #print(trainingDatasetInZScoreFormat)
+
+    # Theta and any other parameters
+    theta = [0.0] * lengthOfAttritube
+    learningRate = 0.001
+    iterations = 100
+
+
+    def cost_function_calculation(trainingDataset, theta):
+        output = 0.0
+        for everydata in trainingDataset:
+            tempOutput = 0.0
+
+            for i in range(0, lengthOfAttritube):
+                tempOutput += everydata[i] * theta[i]
+
+            output += (tempOutput - everydata[lengthOfAttritube]) ** 2
+        return (1.0/ (2 * len(trainingDataset)) ) * output
+
+
+    def stochastic_gradient_descent (data_X_Y, thetaList, learningRate):
+            hx_y = 0.0
+            for countCycle1 in range(0, lengthOfAttritube):
+                hx_y += data_X_Y[countCycle1] * thetaList[countCycle1]
+            for countCycle2 in range(0, lengthOfAttritube):
+                thetaList[countCycle2] -= (learningRate * (hx_y - data_X_Y[lengthOfAttritube]) * data_X_Y[countCycle2])
+
+    def batch_gradient_descent (data_Full, thetaList, learningRate):
+        # update the index one theta
+        for index in range(0, lengthOfAttritube):
+            hx_y = 0.0
+            for data in data_Full:
+                temp_hx_y = 0.0
+                for countBGD in range(0, lengthOfAttritube):
+                    temp_hx_y += (data[countBGD] * thetaList[countBGD])
+                hx_y += (data[lengthOfAttritube] - temp_hx_y) * data[index]
+            thetaList[index] += (1.0 * learningRate * hx_y / len(data_Full))
+
+
+    # batch_gradient_descent function
+    for epoch in range (iterations): #Loop
+        batch_gradient_descent(trainingDatasetInZScoreFormat, theta, learningRate)
+        print(epoch, cost_function_calculation(trainingDatasetInZScoreFormat, theta))
+
+
+
+'''
+    # stochastic_gradient_descent function
+    countbiggerthan1 = 0
+    countsmallerthan1 = 0
+    for i in range (iterations): #Loop
+        for data in trainingDatasetInZScoreFormat: # from 1 to m
+            stochastic_gradient_descent(data, theta, learningRate)
+            print(i, cost_function_calculation(trainingDatasetInZScoreFormat, theta))
+            if (cost_function_calculation(trainingDatasetInZScoreFormat, theta) > 0.155):
+                countbiggerthan1 += 1
+            else:
+                countsmallerthan1 += 1
+            print(countbiggerthan1, countsmallerthan1)
+'''
+
+
 
 
 
