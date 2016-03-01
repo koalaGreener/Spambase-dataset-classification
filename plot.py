@@ -10,7 +10,7 @@ def qqplot(x, y, **kwargs):
     _, yr = stats.probplot(y, fit=False)
     plt.scatter(xr, yr, **kwargs)
 
-sgd = pd.read_csv('sgd.csv')
+sgd = pd.read_csv('sgd_0.001_13887.csv')
 g = sns.FacetGrid(sgd, size = 4)
 g = g.map(plt.scatter, "epoch", "cost")
 plt.show()

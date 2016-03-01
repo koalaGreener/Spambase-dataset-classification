@@ -66,9 +66,14 @@ def readTheFile(filename):
 
     # Theta and any other parameters
     theta = [0.0] * lengthOfAttritube
-    Batch_learningRate = 0.01
+
+    # I have set the lr = 1, 0.1, 0.01
+    Batch_learningRate = 1
+
+    # when lr = 0.001 the cost will soon increase to 0.52
+    # when lr = 0.0001 the cost will increase to 0.132 after 13000times
     stochastic_learningRate = 0.001
-    iterations = 10
+    iterations = 1000
 
 
     def cost_function_calculation(trainingDataset, theta):
@@ -113,12 +118,21 @@ def readTheFile(filename):
             times += 1
             print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
 
+
+
+
 '''
     # batch_gradient_descent function
+    times = 0
     for epoch in range (iterations): #Loop
         batch_gradient_descent(trainingDatasetInZScoreFormat, theta, Batch_learningRate)
-        print(epoch, cost_function_calculation(trainingDatasetInZScoreFormat, theta))
+        times += 1
+        print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
+
+
+
 '''
+
 
 
 
