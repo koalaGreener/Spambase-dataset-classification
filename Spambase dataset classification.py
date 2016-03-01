@@ -1,4 +1,3 @@
-import sys
 
 def readTheFile(filename):
 
@@ -67,8 +66,9 @@ def readTheFile(filename):
 
     # Theta and any other parameters
     theta = [0.0] * lengthOfAttritube
-    learningRate = 0.001
-    iterations = 100
+    Batch_learningRate = 0.01
+    stochastic_learningRate = 0.000
+    iterations = 10
 
 
     def cost_function_calculation(trainingDataset, theta):
@@ -102,40 +102,26 @@ def readTheFile(filename):
             thetaList[index] += (1.0 * learningRate * hx_y / len(data_Full))
 
 
-    # batch_gradient_descent function
-    for epoch in range (iterations): #Loop
-        batch_gradient_descent(trainingDatasetInZScoreFormat, theta, learningRate)
-        print(epoch, cost_function_calculation(trainingDatasetInZScoreFormat, theta))
+    print("\"epoch\"" + "," + "\"cost\"")
 
 
-
-'''
     # stochastic_gradient_descent function
-    countbiggerthan1 = 0
-    countsmallerthan1 = 0
+    times = 0
     for i in range (iterations): #Loop
         for data in trainingDatasetInZScoreFormat: # from 1 to m
-            stochastic_gradient_descent(data, theta, learningRate)
-            print(i, cost_function_calculation(trainingDatasetInZScoreFormat, theta))
-            if (cost_function_calculation(trainingDatasetInZScoreFormat, theta) > 0.155):
-                countbiggerthan1 += 1
-            else:
-                countsmallerthan1 += 1
-            print(countbiggerthan1, countsmallerthan1)
+            stochastic_gradient_descent(data, theta, stochastic_learningRate)
+            times += 1
+            print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
+
+'''
+    # batch_gradient_descent function
+    for epoch in range (iterations): #Loop
+        batch_gradient_descent(trainingDatasetInZScoreFormat, theta, Batch_learningRate)
+        print(epoch, cost_function_calculation(trainingDatasetInZScoreFormat, theta))
 '''
 
 
 
-
-
-
-
-
-
-
-
-
-
-'''主函数调用import的数据'''
+'''import the data that contains the spam'''
 if __name__ == '__main__':
      readTheFile("/Users/HUANGWEIJIE/Dropbox/Web economics/assignment/PartB/dataset/spambase.data.txt")
