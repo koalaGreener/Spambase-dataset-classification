@@ -67,7 +67,7 @@ def readTheFile(filename):
     # Theta and any other parameters
     theta = [0.0] * lengthOfAttritube
     Batch_learningRate = 0.01
-    stochastic_learningRate = 0.000
+    stochastic_learningRate = 0.001
     iterations = 10
 
 
