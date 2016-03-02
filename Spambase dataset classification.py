@@ -31,7 +31,7 @@ def readTheFile(filename):
         count += 1
 
 
-    #Standard Value calculation
+    # Standard Value calculation
     stanardValueOfTrainingDataset = [0.0] * (lengthOfAttritube + 1)
 
     for eachData in trainingDataset:
@@ -44,8 +44,6 @@ def readTheFile(filename):
     for value in stanardValueOfTrainingDataset:
         stanardValueOfTrainingDataset[count] = (value / len(trainingDataset)) ** 0.5
         count += 1
-    #print(stanardValueOfTrainingDataset)
-
 
     # Z-score Format
     trainingDatasetInZScoreFormat = []
@@ -58,11 +56,8 @@ def readTheFile(filename):
                 zScore[count] = int(dev2)
             else:
                 zScore[count] = (float(dev2) - meanValueOfTrainingDataset[count]) / stanardValueOfTrainingDataset[count]
-            #print(dev2, "/", zScore[count],"/", count)
             count += 1
         trainingDatasetInZScoreFormat.append(zScore)
-
-    #print(trainingDatasetInZScoreFormat)
 
     # Theta and any other parameters
     theta = [0.0] * lengthOfAttritube
@@ -70,12 +65,13 @@ def readTheFile(filename):
     # BGD 1 score = 0.130181147
     # BGD 0.1 score = 0.130181345
     # BGD 0.01 score = 0.130181551
+    # AUC = 0.6155963484425435
     Batch_learningRate = 1
 
     # SGD 0.01 score = 0.161840911
     # SGD 0.001 score = 0.150537496
     # SGD 0.0001 score = 0.130540309
-    stochastic_learningRate = 0.001
+    stochastic_learningRate = 0.0001
 
     iterations = 6
 
@@ -111,7 +107,7 @@ def readTheFile(filename):
             thetaList[index] += (1.0 * learningRate * hx_y / len(data_Full))
 
 
-    print("\"epoch\"" + "," + "\"cost\"")
+    #print("\"epoch\"" + "," + "\"cost\"")
 
 
     def calculateTheScore(data, theta):
@@ -124,20 +120,26 @@ def readTheFile(filename):
             sum += (tempDataForCal[i] * theta[i])
         return sum
 
+    # calculate the AUC value
+    def calculateTheAUC(TPR_FPR):
+        temp = [0.0, 0.0]
+        TPR_FPR.insert(0, temp)
+        sum = 0.0
+        for i in range(0, len(TPR_FPR) - 1):
+            sum += ((TPR_FPR[i+1][1] - TPR_FPR[i][1]) * (TPR_FPR[i+1][0] + TPR_FPR[i][0]))
+        return 1.0 / 2 * sum
 
-    # stochastic_gradient_descent function
+    # batch_gradient_descent function
     times = 0
-    for i in range (iterations): #Loop
-        for data in trainingDatasetInZScoreFormat: # from 1 to m
-            stochastic_gradient_descent(data, theta, stochastic_learningRate)
-            times += 1
-            print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
+    for epoch in range (iterations): #Loop
+        batch_gradient_descent(trainingDatasetInZScoreFormat, theta, Batch_learningRate)
+        times += 1
+        #print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
 
 
-
-
-    # output the TP and FP
+    # Calculate the TPR and FPR value
     threshold = 0
+    TPR_FPR = []
     for everyTestData in testDataset:
         TP = 0
         FP = 0
@@ -157,18 +159,29 @@ def readTheFile(filename):
                 FP += 1
             if (compareOne < threshold) and (tempDataForCount[lengthOfAttritube] == 1):
                 FN += 1
-        #print(str(TP), str(TN),str(FP), str(FN), str(TP+TN+FP+FN))
-        print(str(1.0 * TP / (TP + FN)) + "," + str(1.0 * FP / (FP + TN)))
-
+        # init a temp List that contains both TPR and FPR
+        tempTPR_FPR = []
+        tempTPR_FPR.append(1.0 * TP / (TP + FN))
+        tempTPR_FPR.append(1.0 * FP / (FP + TN))
+        # make sure the TPR_FPR are sorted in order, so that the calculateTheAUC function can calculate the AUC value
+        j = 0
+        while j < len(TPR_FPR) and tempTPR_FPR[0] >= TPR_FPR[j][0]:
+            j += 1
+        TPR_FPR.insert(j, tempTPR_FPR)
+        #print(str(1.0 * TP / (TP + FN)) + "," + str(1.0 * FP / (FP + TN)))
+    print(calculateTheAUC(TPR_FPR))
 
 '''
 
-    # batch_gradient_descent function
+
+    # stochastic_gradient_descent function
     times = 0
-    for epoch in range (iterations): #Loop
-        batch_gradient_descent(trainingDatasetInZScoreFormat, theta, Batch_learningRate)
-        times += 1
-        #print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
+    for i in range (iterations): #Loop
+        for data in trainingDatasetInZScoreFormat: # from 1 to m
+            stochastic_gradient_descent(data, theta, stochastic_learningRate)
+            times += 1
+            print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
+
 
 '''
 
