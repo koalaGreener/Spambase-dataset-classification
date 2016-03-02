@@ -67,13 +67,17 @@ def readTheFile(filename):
     # Theta and any other parameters
     theta = [0.0] * lengthOfAttritube
 
-    # I have set the lr = 1, 0.1, 0.01
+    # BGD 1 score = 0.130181147
+    # BGD 0.1 score = 0.130181345
+    # BGD 0.01 score = 0.130181551
     Batch_learningRate = 1
 
-    # when lr = 0.001 the cost will soon increase to 0.52
-    # when lr = 0.0001 the cost will increase to 0.132 after 13000times
+    # SGD 0.01 score = 0.161840911
+    # SGD 0.001 score = 0.150537496
+    # SGD 0.0001 score = 0.130540309
     stochastic_learningRate = 0.001
-    iterations = 1000
+
+    iterations = 6
 
 
     def cost_function_calculation(trainingDataset, theta):
@@ -110,6 +114,17 @@ def readTheFile(filename):
     print("\"epoch\"" + "," + "\"cost\"")
 
 
+    def calculateTheScore(data, theta):
+        sum = 0.0
+        tempDataForCal = []
+        for dev in data.split(","):
+            tempDataForCal.append(float(dev))
+
+        for i in range(lengthOfAttritube):
+            sum += (tempDataForCal[i] * theta[i])
+        return sum
+
+
     # stochastic_gradient_descent function
     times = 0
     for i in range (iterations): #Loop
@@ -121,15 +136,39 @@ def readTheFile(filename):
 
 
 
+    # output the TP and FP
+    threshold = 0
+    for everyTestData in testDataset:
+        TP = 0
+        FP = 0
+        TN = 0
+        FN = 0
+        threshold = calculateTheScore(everyTestData, theta)
+        for everyTestData2 in testDataset:
+            compareOne = calculateTheScore(everyTestData2, theta)
+            tempDataForCount = []
+            for dev in everyTestData2.split(","):
+                tempDataForCount.append(float(dev))
+            if (compareOne >= threshold) and (tempDataForCount[lengthOfAttritube] == 1):
+                TP += 1
+            if (compareOne < threshold) and (tempDataForCount[lengthOfAttritube] == 0):
+                TN += 1
+            if (compareOne >= threshold) and (tempDataForCount[lengthOfAttritube] == 0):
+                FP += 1
+            if (compareOne < threshold) and (tempDataForCount[lengthOfAttritube] == 1):
+                FN += 1
+        #print(str(TP), str(TN),str(FP), str(FN), str(TP+TN+FP+FN))
+        print(str(1.0 * TP / (TP + FN)) + "," + str(1.0 * FP / (FP + TN)))
+
+
 '''
+
     # batch_gradient_descent function
     times = 0
     for epoch in range (iterations): #Loop
         batch_gradient_descent(trainingDatasetInZScoreFormat, theta, Batch_learningRate)
         times += 1
-        print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
-
-
+        #print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
 
 '''
 
