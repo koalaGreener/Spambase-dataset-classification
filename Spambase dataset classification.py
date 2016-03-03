@@ -71,6 +71,7 @@ def readTheFile(filename):
     # SGD 0.01 score = 0.161840911
     # SGD 0.001 score = 0.150537496
     # SGD 0.0001 score = 0.130540309
+    # AUC = 0.6218737004693164
     stochastic_learningRate = 0.0001
 
     iterations = 6
@@ -129,13 +130,17 @@ def readTheFile(filename):
             sum += ((TPR_FPR[i+1][1] - TPR_FPR[i][1]) * (TPR_FPR[i+1][0] + TPR_FPR[i][0]))
         return 1.0 / 2 * sum
 
-    # batch_gradient_descent function
+    # stochastic_gradient_descent function
     times = 0
-    for epoch in range (iterations): #Loop
-        batch_gradient_descent(trainingDatasetInZScoreFormat, theta, Batch_learningRate)
-        times += 1
-        #print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
-
+    for i in range (iterations): #Loop
+        if times == 23111:
+            break
+        for data in trainingDatasetInZScoreFormat: # from 1 to m
+            stochastic_gradient_descent(data, theta, stochastic_learningRate)
+            times += 1
+            print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
+            if times == 23111:
+                break
 
     # Calculate the TPR and FPR value
     threshold = 0
@@ -174,18 +179,18 @@ def readTheFile(filename):
 '''
 
 
-    # stochastic_gradient_descent function
+
+
+    # batch_gradient_descent function
     times = 0
-    for i in range (iterations): #Loop
-        for data in trainingDatasetInZScoreFormat: # from 1 to m
-            stochastic_gradient_descent(data, theta, stochastic_learningRate)
-            times += 1
-            print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
+    for epoch in range (iterations): #Loop
+        batch_gradient_descent(trainingDatasetInZScoreFormat, theta, Batch_learningRate)
+        times += 1
+        #print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
+
 
 
 '''
-
-
 
 
 '''import the data that contains the spam'''
