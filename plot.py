@@ -12,20 +12,24 @@ def qqplot(x, y, **kwargs):
     plt.scatter(xr, yr, **kwargs)
 
 
+# plot the mean squared error and iterations
+gd = pd.read_csv('output_csv_folder/log_sgd_0.1.csv')
+g = sns.FacetGrid(gd, size = 6)
+g = g.map(plt.scatter, "epoch", "cost")
+plt.show()
+
+
+
 
 # plot the curve
-curveData = pd.read_csv('output_csv_folder/BGD_ROC_Curve.csv')
+curveData = pd.read_csv('output_csv_folder/log_BGD_0.1_curve_0.7343610764569596.csv')
 g = sns.FacetGrid(curveData, size = 4)
 g = g.map(plt.scatter, "FPR", "TPR")
 plt.ylim(0.0 ,1.0)
 plt.xlim(0.0 ,1.0)
-plt.show()
 
 
-# plot the mean squared error and iterations
-gd = pd.read_csv('output_csv_folder/bgd_0.01_1000.csv')
-g = sns.FacetGrid(gd, size = 6)
-g = g.map(plt.scatter, "epoch", "cost")
+
 
 
 

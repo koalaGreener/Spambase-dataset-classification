@@ -1,3 +1,8 @@
+import numpy as np
+import math
+from decimal import *
+
+
 
 def readTheFile(filename):
 
@@ -66,18 +71,23 @@ def readTheFile(filename):
     # BGD 0.1 score = 0.130181345
     # BGD 0.01 score = 0.130181551
     # AUC = 0.6155963484425435
-    Batch_learningRate = 1
+    Batch_learningRate = 0.001
 
     # SGD 0.01 score = 0.161840911
     # SGD 0.001 score = 0.150537496
     # SGD 0.0001 score = 0.130540309
     # AUC = 0.6218737004693164
-    stochastic_learningRate = 0.0001
+    stochastic_learningRate = 0.1
 
-    iterations = 6
+    iterations = 10000
 
 
-    def cost_function_calculation(trainingDataset, theta):
+    def sigmoid(x):
+        #print(x)
+        return 1 / (1 + math.exp(-x))
+
+
+    def cost_function_calculation_linear(trainingDataset, theta):
         output = 0.0
         for everydata in trainingDataset:
             tempOutput = 0.0
@@ -89,14 +99,36 @@ def readTheFile(filename):
         return (1.0/ (2 * len(trainingDataset)) ) * output
 
 
-    def stochastic_gradient_descent (data_X_Y, thetaList, learningRate):
+
+    def cost_function_calculation_logistic(trainingDataset, theta):
+        output = 0.0
+        for everydata in trainingDataset:
+            tempOutput = 0.0
+            for i in range(0, lengthOfAttritube):
+                tempOutput += everydata[i] * theta[i]
+            if abs(tempOutput) >= 5:
+                tempOutput = 5 * abs(tempOutput) / tempOutput
+            output += ((-1.0 * everydata[lengthOfAttritube]) * np.log(sigmoid(tempOutput)) - ((1.0 - everydata[lengthOfAttritube]) * np.log(1.0 - sigmoid(tempOutput))))
+        return (1.0/ len(trainingDataset) ) * output
+
+
+    def stochastic_gradient_descent_logistic (data_X_Y, thetaList, learningRate):
+            hx_y = 0.0
+            for countCycle1 in range(0, lengthOfAttritube):
+                hx_y += data_X_Y[countCycle1] * thetaList[countCycle1]
+            for countCycle2 in range(0, lengthOfAttritube):
+                # in the logistic SGD, we need to add the sigmoid function in the hx_y
+                thetaList[countCycle2] -= (learningRate * (sigmoid(hx_y) - data_X_Y[lengthOfAttritube]) * data_X_Y[countCycle2])
+
+
+    def stochastic_gradient_descent_linear (data_X_Y, thetaList, learningRate):
             hx_y = 0.0
             for countCycle1 in range(0, lengthOfAttritube):
                 hx_y += data_X_Y[countCycle1] * thetaList[countCycle1]
             for countCycle2 in range(0, lengthOfAttritube):
                 thetaList[countCycle2] -= (learningRate * (hx_y - data_X_Y[lengthOfAttritube]) * data_X_Y[countCycle2])
 
-    def batch_gradient_descent (data_Full, thetaList, learningRate):
+    def batch_gradient_descent_linear (data_Full, thetaList, learningRate):
         # update the index one theta
         for index in range(0, lengthOfAttritube):
             hx_y = 0.0
@@ -107,8 +139,17 @@ def readTheFile(filename):
                 hx_y += (data[lengthOfAttritube] - temp_hx_y) * data[index]
             thetaList[index] += (1.0 * learningRate * hx_y / len(data_Full))
 
-
-    #print("\"epoch\"" + "," + "\"cost\"")
+    def batch_gradient_descent_logistic (data_Full, thetaList, learningRate):
+        # update the index one theta
+        for index in range(0, lengthOfAttritube):
+            hx_y = 0.0
+            for data in data_Full:
+                temp_hx_y = 0.0
+                for countBGD in range(0, lengthOfAttritube):
+                    temp_hx_y += (data[countBGD] * thetaList[countBGD])
+                hx_y -= ((sigmoid(temp_hx_y) - data[lengthOfAttritube]) * data[index])
+            thetaList[index] += (1.0 * learningRate * hx_y)
+            #print(thetaList[index])
 
 
     def calculateTheScore(data, theta):
@@ -130,17 +171,20 @@ def readTheFile(filename):
             sum += ((TPR_FPR[i+1][1] - TPR_FPR[i][1]) * (TPR_FPR[i+1][0] + TPR_FPR[i][0]))
         return 1.0 / 2 * sum
 
-    # stochastic_gradient_descent function
+
+
+    # stochastic_gradient_descent function for logistic
     times = 0
     for i in range (iterations): #Loop
-        if times == 23111:
-            break
+        #if times == 23111:
+            #break
         for data in trainingDatasetInZScoreFormat: # from 1 to m
-            stochastic_gradient_descent(data, theta, stochastic_learningRate)
+            stochastic_gradient_descent_logistic(data, theta, stochastic_learningRate)
             times += 1
-            print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
-            if times == 23111:
-                break
+            print(str(times) + "," + str(cost_function_calculation_logistic(trainingDatasetInZScoreFormat, theta)))
+            #if times == 23111:
+                #break
+
 
     # Calculate the TPR and FPR value
     threshold = 0
@@ -177,16 +221,37 @@ def readTheFile(filename):
     print(calculateTheAUC(TPR_FPR))
 
 '''
+    # stochastic_gradient_descent function for linear
+    times = 0
+    for i in range (iterations): #Loop
+        #if times == 23111:
+            #break
+        for data in trainingDatasetInZScoreFormat: # from 1 to m
+            stochastic_gradient_descent_linear(data, theta, stochastic_learningRate)
+            times += 1
+            print(str(times) + "," + str(cost_function_calculation_linear(trainingDatasetInZScoreFormat, theta)))
+            #if times == 23111:
+                #break
 
 
-
-
-    # batch_gradient_descent function
+    # batch_gradient_descent function for logistic
     times = 0
     for epoch in range (iterations): #Loop
-        batch_gradient_descent(trainingDatasetInZScoreFormat, theta, Batch_learningRate)
+        batch_gradient_descent_logistic(trainingDatasetInZScoreFormat, theta, Batch_learningRate)
         times += 1
-        #print(str(times) + "," + str(cost_function_calculation(trainingDatasetInZScoreFormat, theta)))
+        print(str(times) + "," + str(cost_function_calculation_logistic(trainingDatasetInZScoreFormat, theta)))
+
+
+
+
+
+    # batch_gradient_descent function for linear
+    times = 0
+    for epoch in range (iterations): #Loop
+        batch_gradient_descent_linear(trainingDatasetInZScoreFormat, theta, Batch_learningRate)
+        times += 1
+        #print(str(times) + "," + str(cost_function_calculation_linear(trainingDatasetInZScoreFormat, theta)))
+
 
 
 
