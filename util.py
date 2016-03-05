@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 lengthOfAttritube = 57
 
@@ -124,8 +125,8 @@ def cost_function_calculation_logistic(trainingDataset, theta):
             tempOutput = 0.0
             for i in range(0, lengthOfAttritube):
                 tempOutput += everydata[i] * theta[i]
-            if abs(tempOutput) >= 5:
-                tempOutput = 5 * abs(tempOutput) / tempOutput
+            if abs(tempOutput) >= 10:
+                tempOutput = 10 * abs(tempOutput) / tempOutput
             output += ((-1.0 * everydata[lengthOfAttritube]) * np.log(sigmoid(tempOutput)) - ((1.0 - everydata[lengthOfAttritube]) * np.log(1.0 - sigmoid(tempOutput))))
         return (1.0/ len(trainingDataset) ) * output
 
@@ -136,10 +137,10 @@ def stochastic_gradient_descent_logistic (data_X_Y, thetaList, learningRate):
                 hx_y += data_X_Y[countCycle1] * thetaList[countCycle1]
             for countCycle2 in range(0, lengthOfAttritube):
                 # in the logistic SGD, we need to add the sigmoid function in the hx_y
-                thetaList[countCycle2] -= (learningRate * (util.sigmoid(hx_y) - data_X_Y[lengthOfAttritube]) * data_X_Y[countCycle2])
+                thetaList[countCycle2] -= (learningRate * (sigmoid(hx_y) - data_X_Y[lengthOfAttritube]) * data_X_Y[countCycle2])
 
 
-def stochastic_gradient_descent_linear (data_X_Y, thetaList, learningRate):
+def stochastic_gradient_descent_linear(data_X_Y, thetaList, learningRate):
             hx_y = 0.0
             for countCycle1 in range(0, lengthOfAttritube):
                 hx_y += data_X_Y[countCycle1] * thetaList[countCycle1]
@@ -153,9 +154,11 @@ def batch_gradient_descent_logistic (data_Full, thetaList, learningRate):
             hx_y = 0.0
             for data in data_Full:
                 temp_hx_y = 0.0
+                if abs(temp_hx_y) >= 10:
+                    temp_hx_y = 10 * abs(temp_hx_y) / temp_hx_y
                 for countBGD in range(0, lengthOfAttritube):
                     temp_hx_y += (data[countBGD] * thetaList[countBGD])
-                hx_y -= ((util.sigmoid(temp_hx_y) - data[lengthOfAttritube]) * data[index])
+                hx_y -= ((sigmoid(temp_hx_y) - data[lengthOfAttritube]) * data[index])
             thetaList[index] += (1.0 * learningRate * hx_y)
             #print(thetaList[index])
 
