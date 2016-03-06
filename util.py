@@ -1,5 +1,13 @@
-import math
 import numpy as np
+import math
+from decimal import *
+from sklearn.metrics import *
+from util import *
+import pandas as pd
+from docutils.nodes import inline
+from scipy import stats, integrate
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 lengthOfAttritube = 57
 
@@ -227,5 +235,68 @@ def output_Roc_data(testDataset, theta, flag):
         TPR_FPR.insert(j, tempTPR_FPR)
         #print(str(1.0 * TP / (TP + FN)) + "," + str(1.0 * FP / (FP + TN)))
     print(calculateTheAUC(TPR_FPR))
+
+
+def calculate_AUC_value_and_plot_Roc_Curve(testDataset, theta):
+    #Calculate the AUC value
+    ytrue = []
+    yprediect = []
+    #ytrue直接抓[lengthOfAttritube] prediect用预测值
+    for everyTestData in (testDataset):
+        ytrue.append(everyTestData[lengthOfAttritube])
+    for everyTestData2 in (testDataset):
+        yprediect.append(calculateTheScore(everyTestData2, theta, False))
+    print(roc_auc_score(ytrue, yprediect))
+
+    #plot the ROC Curve
+    fpr ,tpr, thresold = roc_curve(ytrue,yprediect)
+    plt.plot(fpr,tpr)
+    plt.xlabel("FPR")
+    plt.ylabel("TPR")
+    plt.title("ROC Curve")
+    plt.show()
+
+def log_sgd(trainingDataset, iterations, theta, stochastic_learningRate):
+        # stochastic_gradient_descent function for logistic
+    times = 0
+    for i in range (iterations): #Loop
+        #if times == 10:
+            #break
+        for data in trainingDataset: # from 1 to m
+            stochastic_gradient_descent_logistic(data, theta, stochastic_learningRate)
+            times += 1
+            print(str(times) + "," + str(cost_function_calculation_logistic(trainingDataset, theta)))
+            #if times == 10:
+                #break
+
+def log_bgd(trainingDataset, iterations, theta, Batch_learningRate):
+    # batch_gradient_descent function for logistic
+    times = 0
+    for epoch in range (iterations): #Loop
+        batch_gradient_descent_logistic(trainingDataset, theta, Batch_learningRate)
+        times += 1
+        print(str(times) + "," + str(cost_function_calculation_logistic(trainingDataset, theta)))
+
+
+def linear_sgd(trainingDataset, iterations, theta, stochastic_learningRate):
+        # stochastic_gradient_descent function for linear
+    times = 0
+    for i in range (iterations): #Loop
+        #if times == 23553:
+            #break
+        for data in trainingDataset: # from 1 to m
+            stochastic_gradient_descent_linear(data, theta, stochastic_learningRate)
+            times += 1
+            print(str(times) + "," + str(cost_function_calculation_linear(trainingDataset, theta)))
+            #if times == 23553:
+                #break
+
+def linear_bgd(trainingDataset, iterations, theta, Batch_learningRate):
+    # batch_gradient_descent function for linear
+    times = 0
+    for epoch in range (iterations): #Loop
+        batch_gradient_descent_linear(trainingDataset, theta, Batch_learningRate)
+        times += 1
+        print(str(times) + "," + str(cost_function_calculation_linear(trainingDataset, theta)))
 
 
