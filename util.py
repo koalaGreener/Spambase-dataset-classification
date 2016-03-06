@@ -114,29 +114,31 @@ def sigmoid(x):
     return 1 / (1 + math.exp(-x))
 
 
-def cost_function_calculation_linear(trainingDataset, theta):
+def cost_function_calculation_linear(K_fold_training_dataset, trainingDataset, theta):
         output = 0.0
-        for everydata in trainingDataset:
-            tempOutput = 0.0
+        for k_fold_dataset in K_fold_training_dataset:
+            for everydata in Format_trainingdata(k_fold_dataset):
+                tempOutput = 0.0
 
-            for i in range(0, lengthOfAttritube):
-                tempOutput += everydata[i] * theta[i]
+                for i in range(0, lengthOfAttritube):
+                    tempOutput += everydata[i] * theta[i]
 
-            output += (tempOutput - everydata[lengthOfAttritube]) ** 2
+                output += (tempOutput - everydata[lengthOfAttritube]) ** 2
         return (1.0/ (2 * len(trainingDataset)) ) * output
 
 
 
-def cost_function_calculation_logistic(trainingDataset, theta):
+def cost_function_calculation_logistic(K_fold_training_dataset, trainingDataset, theta):
         output = 0.0
-        for everydata in trainingDataset:
-            tempOutput = 0.0
-            for i in range(0, lengthOfAttritube):
-                tempOutput += everydata[i] * theta[i]
-            if abs(tempOutput) >= 10:
-                tempOutput = 10 * abs(tempOutput) / tempOutput
-            output += ((-1.0 * everydata[lengthOfAttritube]) * np.log(sigmoid(tempOutput)) - ((1.0 - everydata[lengthOfAttritube]) * np.log(1.0 - sigmoid(tempOutput))))
-        return (1.0/ len(trainingDataset) ) * output
+        for k_fold_dataset in K_fold_training_dataset:
+            for everydata in Format_trainingdata(k_fold_dataset):
+                tempOutput = 0.0
+                for i in range(0, lengthOfAttritube):
+                    tempOutput += everydata[i] * theta[i]
+                if abs(tempOutput) >= 10:
+                    tempOutput = 10 * abs(tempOutput) / tempOutput
+                output += ((-1.0 * everydata[lengthOfAttritube]) * np.log(sigmoid(tempOutput)) - ((1.0 - everydata[lengthOfAttritube]) * np.log(1.0 - sigmoid(tempOutput))))
+        return (1.0/ (len(trainingDataset) * len(K_fold_training_dataset)) ) * output
 
 
 def stochastic_gradient_descent_logistic (data_X_Y, thetaList, learningRate):
@@ -237,11 +239,12 @@ def output_Roc_data(testDataset, theta, flag):
     print(calculateTheAUC(TPR_FPR))
 
 
-def calculate_AUC_value_and_plot_Roc_Curve(testDataset, theta):
+def calculate_AUC_value_and_plot_Roc_Curve(K_fold_test_dataset, testDataset, theta):
     #Calculate the AUC value
     ytrue = []
     yprediect = []
-    #ytrue直接抓[lengthOfAttritube] prediect用预测值
+    # ytrue is the data[lengthOfAttritube], the flag in the data
+    # yprediect is the prediect value
     for everyTestData in (testDataset):
         ytrue.append(everyTestData[lengthOfAttritube])
     for everyTestData2 in (testDataset):
@@ -256,7 +259,7 @@ def calculate_AUC_value_and_plot_Roc_Curve(testDataset, theta):
     plt.title("ROC Curve")
     plt.show()
 
-def log_sgd(trainingDataset, iterations, theta, stochastic_learningRate):
+def log_sgd(K_fold_training_dataset, trainingDataset, iterations, theta, stochastic_learningRate):
         # stochastic_gradient_descent function for logistic
     times = 0
     for i in range (iterations): #Loop
@@ -265,20 +268,20 @@ def log_sgd(trainingDataset, iterations, theta, stochastic_learningRate):
         for data in trainingDataset: # from 1 to m
             stochastic_gradient_descent_logistic(data, theta, stochastic_learningRate)
             times += 1
-            print(str(times) + "," + str(cost_function_calculation_logistic(trainingDataset, theta)))
+            print(str(times) + "," + str(cost_function_calculation_logistic(K_fold_training_dataset, trainingDataset, theta)))
             #if times == 10:
                 #break
 
-def log_bgd(trainingDataset, iterations, theta, Batch_learningRate):
+def log_bgd(K_fold_training_dataset, trainingDataset, iterations, theta, Batch_learningRate):
     # batch_gradient_descent function for logistic
     times = 0
     for epoch in range (iterations): #Loop
         batch_gradient_descent_logistic(trainingDataset, theta, Batch_learningRate)
         times += 1
-        print(str(times) + "," + str(cost_function_calculation_logistic(trainingDataset, theta)))
+        print(str(times) + "," + str(cost_function_calculation_logistic(K_fold_training_dataset, trainingDataset, theta)))
 
 
-def linear_sgd(trainingDataset, iterations, theta, stochastic_learningRate):
+def linear_sgd(K_fold_training_dataset, trainingDataset, iterations, theta, stochastic_learningRate):
         # stochastic_gradient_descent function for linear
     times = 0
     for i in range (iterations): #Loop
@@ -287,16 +290,16 @@ def linear_sgd(trainingDataset, iterations, theta, stochastic_learningRate):
         for data in trainingDataset: # from 1 to m
             stochastic_gradient_descent_linear(data, theta, stochastic_learningRate)
             times += 1
-            print(str(times) + "," + str(cost_function_calculation_linear(trainingDataset, theta)))
+            print(str(times) + "," + str(cost_function_calculation_linear(K_fold_training_dataset, trainingDataset, theta)))
             #if times == 23553:
                 #break
 
-def linear_bgd(trainingDataset, iterations, theta, Batch_learningRate):
+def linear_bgd(K_fold_training_dataset, trainingDataset, iterations, theta, Batch_learningRate):
     # batch_gradient_descent function for linear
     times = 0
     for epoch in range (iterations): #Loop
         batch_gradient_descent_linear(trainingDataset, theta, Batch_learningRate)
         times += 1
-        print(str(times) + "," + str(cost_function_calculation_linear(trainingDataset, theta)))
+        print(str(times) + "," + str(cost_function_calculation_linear(K_fold_training_dataset, trainingDataset, theta)))
 
 
