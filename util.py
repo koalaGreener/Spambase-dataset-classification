@@ -1,6 +1,5 @@
 import numpy as np
 import math
-from decimal import *
 from sklearn.metrics import *
 from util import *
 import pandas as pd
@@ -11,7 +10,7 @@ import seaborn as sns
 
 lengthOfAttritube = 57
 
-
+# Format the test dataset using Z-score
 def Format_testdata(testDataset):
 
     # Sum of training dataset
@@ -60,7 +59,7 @@ def Format_testdata(testDataset):
 
     return trainingDatasetInZScoreFormat
 
-
+# Format the training dataset using Z-score
 def Format_trainingdata(trainingDataset):
 
     # Sum of training dataset
@@ -109,11 +108,13 @@ def Format_trainingdata(trainingDataset):
 
     return trainingDatasetInZScoreFormat
 
+# sigmoid function
 def sigmoid(x):
     #print(x)
     return 1 / (1 + math.exp(-x))
 
 
+# calculate the MSE/cost when the model is linear
 def cost_function_calculation_linear(K_fold_training_dataset, trainingDataset, theta):
         output = 0.0
         for k_fold_dataset in K_fold_training_dataset:
@@ -127,7 +128,7 @@ def cost_function_calculation_linear(K_fold_training_dataset, trainingDataset, t
         return (1.0/ (2 * len(trainingDataset)) ) * output
 
 
-
+# calculate the MSE/cost when the model is logistic
 def cost_function_calculation_logistic(K_fold_training_dataset, trainingDataset, theta):
         output = 0.0
         for k_fold_dataset in K_fold_training_dataset:
@@ -141,6 +142,7 @@ def cost_function_calculation_logistic(K_fold_training_dataset, trainingDataset,
         return (1.0/ (len(trainingDataset) * len(K_fold_training_dataset)) ) * output
 
 
+# logistic regression, using SGD
 def stochastic_gradient_descent_logistic (data_X_Y, thetaList, learningRate):
             hx_y = 0.0
             for countCycle1 in range(0, lengthOfAttritube):
@@ -149,7 +151,7 @@ def stochastic_gradient_descent_logistic (data_X_Y, thetaList, learningRate):
                 # in the logistic SGD, we need to add the sigmoid function in the hx_y
                 thetaList[countCycle2] -= (learningRate * (sigmoid(hx_y) - data_X_Y[lengthOfAttritube]) * data_X_Y[countCycle2])
 
-
+# linear regression, using SGD
 def stochastic_gradient_descent_linear(data_X_Y, thetaList, learningRate):
             hx_y = 0.0
             for countCycle1 in range(0, lengthOfAttritube):
@@ -157,7 +159,7 @@ def stochastic_gradient_descent_linear(data_X_Y, thetaList, learningRate):
             for countCycle2 in range(0, lengthOfAttritube):
                 thetaList[countCycle2] -= (learningRate * (hx_y - data_X_Y[lengthOfAttritube]) * data_X_Y[countCycle2])
 
-
+# logistic regression, using BGD
 def batch_gradient_descent_logistic (data_Full, thetaList, learningRate):
         # update the index one theta
         for index in range(0, lengthOfAttritube):
@@ -172,7 +174,7 @@ def batch_gradient_descent_logistic (data_Full, thetaList, learningRate):
             thetaList[index] += (1.0 * learningRate * hx_y)
             #print(thetaList[index])
 
-
+# linear regression, using BGD
 def batch_gradient_descent_linear (data_Full, thetaList, learningRate):
         # update the index one theta
         for index in range(0, lengthOfAttritube):
@@ -182,7 +184,7 @@ def batch_gradient_descent_linear (data_Full, thetaList, learningRate):
                 for countBGD in range(0, lengthOfAttritube):
                     temp_hx_y += (data[countBGD] * thetaList[countBGD])
                 hx_y += (data[lengthOfAttritube] - temp_hx_y) * data[index]
-            thetaList[index] += (1.0 * learningRate * hx_y / len(data_Full))
+            thetaList[index] += (1.0 * learningRate * hx_y)
 
 
 def calculateTheScore(data, theta, flag):

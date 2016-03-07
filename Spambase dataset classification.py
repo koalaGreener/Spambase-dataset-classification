@@ -7,16 +7,16 @@ def readTheFile(filename):
     lengthOfAttritube = 57
 
     theta = [0.0] * lengthOfAttritube
-    Batch_learningRate = 0.001
+    Batch_learningRate = 0.0001
     stochastic_learningRate = 0.01
-    iterations = 1
+    iterations = 1000
     K_fold_training_dataset = []
     K_fold_test_dataset = []
     trainingDataset = []
     testDataset = []
 
     # 10-Fold
-    for i in range(2):
+    for i in range(1):
         count = 1
         temp_for_fold_test = []
         temp_for_fold_train = []
