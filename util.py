@@ -186,18 +186,16 @@ def batch_gradient_descent_linear (data_Full, thetaList, learningRate):
                 hx_y += (data[lengthOfAttritube] - temp_hx_y) * data[index]
             thetaList[index] += (1.0 * learningRate * hx_y)
 
-
-def calculateTheScore(data, theta, flag):
+# calculate the score of each test dataset to plot the roc curve and output the auc value
+# I found that whether the return value contains sigmoid, the result is the same
+def calculateTheScore(data, theta):
         sum = 0.0
         for i in range(lengthOfAttritube):
             sum += (data[i] * theta[i])
-        if flag == True:
-            return (sum)
-        else:
-            return sigmoid(sum)
+        return (sum)
 
 
-    # calculate the AUC value
+# calculate the AUC value
 def calculateTheAUC(TPR_FPR):
         temp = [0.0, 0.0]
         TPR_FPR.insert(0, temp)
@@ -206,6 +204,7 @@ def calculateTheAUC(TPR_FPR):
             sum += ((TPR_FPR[i+1][1] - TPR_FPR[i][1]) * (TPR_FPR[i+1][0] + TPR_FPR[i][0]))
         return 1.0 / 2 * sum
 
+# implemented the roc calculation, while I used the library one
 def output_Roc_data(testDataset, theta, flag):
 
     # Calculate the TPR and FPR value
@@ -240,7 +239,7 @@ def output_Roc_data(testDataset, theta, flag):
         #print(str(1.0 * TP / (TP + FN)) + "," + str(1.0 * FP / (FP + TN)))
     print(calculateTheAUC(TPR_FPR))
 
-
+# use the library to calculate the auc score and plot the curve
 def calculate_AUC_value_and_plot_Roc_Curve(K_fold_test_dataset, testDataset, theta):
     #Calculate the AUC value
     ytrue = []
@@ -250,7 +249,7 @@ def calculate_AUC_value_and_plot_Roc_Curve(K_fold_test_dataset, testDataset, the
     for everyTestData in (testDataset):
         ytrue.append(everyTestData[lengthOfAttritube])
     for everyTestData2 in (testDataset):
-        yprediect.append(calculateTheScore(everyTestData2, theta, False))
+        yprediect.append(calculateTheScore(everyTestData2, theta))
     print(roc_auc_score(ytrue, yprediect))
 
     #plot the ROC Curve
@@ -261,6 +260,7 @@ def calculate_AUC_value_and_plot_Roc_Curve(K_fold_test_dataset, testDataset, the
     plt.title("ROC Curve")
     plt.show()
 
+# logistic regression trained via sgd
 def log_sgd(K_fold_training_dataset, trainingDataset, iterations, theta, stochastic_learningRate):
         # stochastic_gradient_descent function for logistic
     times = 0
@@ -274,6 +274,7 @@ def log_sgd(K_fold_training_dataset, trainingDataset, iterations, theta, stochas
             #if times == 10:
                 #break
 
+# logistic regression trained via bgd
 def log_bgd(K_fold_training_dataset, trainingDataset, iterations, theta, Batch_learningRate):
     # batch_gradient_descent function for logistic
     times = 0
@@ -283,6 +284,7 @@ def log_bgd(K_fold_training_dataset, trainingDataset, iterations, theta, Batch_l
         print(str(times) + "," + str(cost_function_calculation_logistic(K_fold_training_dataset, trainingDataset, theta)))
 
 
+# linear regression trained via sgd
 def linear_sgd(K_fold_training_dataset, trainingDataset, iterations, theta, stochastic_learningRate):
         # stochastic_gradient_descent function for linear
     times = 0
@@ -296,6 +298,7 @@ def linear_sgd(K_fold_training_dataset, trainingDataset, iterations, theta, stoc
             #if times == 23553:
                 #break
 
+# linear regression trained via bgd
 def linear_bgd(K_fold_training_dataset, trainingDataset, iterations, theta, Batch_learningRate):
     # batch_gradient_descent function for linear
     times = 0
